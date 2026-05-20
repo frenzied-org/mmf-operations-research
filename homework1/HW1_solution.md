@@ -1,8 +1,7 @@
-# Homework Assignment 1 Solution
+# Homework assignment 1 solution
 
-All numerical solves were done in Python with `scipy.optimize.linprog`.  The
-problem statements mention MATLAB, but the Python models below are the same
-linear programs.
+I used Python's `scipy.optimize.linprog` for the numerical parts.  The homework
+mentions MATLAB, but the models below are the same linear programs.
 
 ## Problem 1
 
@@ -22,10 +21,10 @@ $$
 
 where $p_i$ is the purchase price and $c_i$ is the current price.
 
-The expected one-year value lost by selling $x_i$ shares is $f_i x_i$, where
-$f_i$ is the expected price in one year.  Since the original portfolio is fixed,
-maximizing the expected value of the remaining shares is equivalent to
-minimizing the expected value sold.
+The expected one-year value lost from selling $x_i$ shares is $f_i x_i$, where
+$f_i$ is the expected price in one year.  The starting portfolio is fixed, so
+maximizing the expected value left in the account is the same as minimizing the
+expected value sold.
 
 The linear program is
 
@@ -53,8 +52,8 @@ The optimal sales are:
 | 9 | 100.000000 | 0.000000 |
 | 10 | 100.000000 | 0.000000 |
 
-This raises exactly $\$30{,}000.00$ after taxes and transaction costs.  The
-expected before-tax one-year value of the remaining portfolio is
+These sales raise exactly $\$30{,}000.00$ after taxes and transaction costs.
+The expected before-tax one-year value of the remaining portfolio is
 $\$20{,}893.71$.
 
 ## Problem 2
@@ -103,7 +102,7 @@ $$
 ### Part (a)
 
 Let $x_{ij}$ equal 1 if worker $i$ is assigned to project $j$, and 0 otherwise.
-The cost is $\$20$ times the number of hours.
+The cost for an assignment is $\$20$ times the number of hours.
 
 The linear program is
 
@@ -118,11 +117,11 @@ $$
 \end{aligned}
 $$
 
-Here $h_{ij}$ is the number of hours worker $i$ needs for project $j$.
+Here $h_{ij}$ is the number of hours required when worker $i$ does project $j$.
 
 ### Part (b)
 
-The Python linear-programming solution is already integer:
+The Python linear-programming solution already has 0-1 values:
 
 | Worker | Assigned project | Hours | Cost |
 |---:|---:|---:|---:|
@@ -147,7 +146,7 @@ Let:
 - $I_0 = 2000$ be the initial inventory.
 
 I use the timing convention that the inventory cost $i_t$ is charged on the
-inventory carried into month $t$, namely $I_{t-1}$.  Under that convention, the
+inventory carried into month $t$, namely $I_{t-1}$.  With that convention, the
 linear program is
 
 $$
@@ -206,10 +205,10 @@ The Python solution is:
 
 The minimum cost is $\$45{,}938.72$.
 
-It is advantageous to allow excess cash generation and reinvestment because
-surplus cash in an early period is no longer wasted.  It becomes a usable asset
-for later liabilities.  In this specific data set, the optimal solution happens
-to use no surplus cash, so reinvestment does not reduce the minimum cost.
+Allowing excess cash generation and reinvestment can help because surplus cash
+in an early period is not wasted.  It earns interest and can pay later
+liabilities.  For this data set, the optimal solution uses no surplus cash, so
+reinvestment does not lower the minimum cost.
 
 ## Problem 6
 
