@@ -4,6 +4,24 @@
 
 Currently we own 100 shares each of stocks 1 through 10. The original price we paid for these stocks, today’s price, and the expected price in one year for each stock is shown in Table 76.
 
+| Stock | Shares Owned | Purchase | Current | In One Year |
+|-------|--------------|----------|---------|-------------|
+| 1 | 100 | 20 | 30 | 36 |
+| 2 | 100 | 25 | 34 | 39 |
+| 3 | 100 | 30 | 43 | 42 |
+| 4 | 100 | 35 | 47 | 45 |
+| 5 | 100 | 40 | 49 | 51 |
+| 6 | 100 | 45 | 53 | 55 |
+| 7 | 100 | 50 | 60 | 63 |
+| 8 | 100 | 55 | 62 | 64 |
+| 9 | 100 | 60 | 64 | 66 |
+| 10 | 100 | 65 | 66 | 70 |
+
+| Parameter | Value |
+|-----------|-------|
+| Tax rate (%) | 0.3 |
+| Transaction cost (%) | 0.01 |
+
 We need money today and are going to sell some of our stocks. The tax rate on capital gains is 30%. If we sell 50 shares of stock 1, then we must pay tax of
 
 $$
@@ -68,6 +86,40 @@ In addition, there is a unit inventory cost $i_t$ for holding the commodity in t
 The trader wishes to have no inventory of the commodity at the end of the year.
 
 Formulate a linear program that maximizes profit from the buying or selling of the commodity over the 12-month time horizon.
+
+---
+
+## Example 1.9 — Bond Portfolio
+
+A bank has the following liability schedule:
+
+| Year | Liability |
+|------|-----------:|
+| 1 | 12,000 |
+| 2 | 18,000 |
+| 3 | 20,000 |
+
+The bank wishes to use the three bonds below to form a portfolio today to hold until all bonds have matured and that will generate the required cash to meet the liabilities. All bonds have a face value of \$100 and the coupons are annual, with one coupon per year. For example, one unit of Bond 2 costs \$99 now and the holder will receive \$3.50 after 1 year and then \$3.50 plus the face value of \$100 at the end of the second year, which is the maturity of Bond 2.
+
+| Bond | Price | Coupon | Maturity year |
+|------|------:|-------:|--------------:|
+| 1 | 102 | 5 | 1 |
+| 2 | 99 | 3.5 | 2 |
+| 3 | 98 | 3.5 | 3 |
+
+Let $x_i$ be the amount of bond $i$ purchased. The minimum-cost portfolio can be formulated as
+
+$$
+\begin{aligned}
+\min \quad & 102x_1 + 99x_2 + 98x_3 \\
+\mathrm{subject\ to} \quad & 105x_1 + 3.5x_2 + 3.5x_3 \geq 12000 \\
+& 103.5x_2 + 3.5x_3 \geq 18000 \\
+& 103.5x_3 \geq 20000 \\
+& x_1, x_2, x_3 \geq 0.
+\end{aligned}
+$$
+
+The cash-flow interpretation is the same as in the source text: in year 1, Bond 1 contributes \$105 per unit, Bond 2 contributes \$3.50 per unit, and Bond 3 contributes \$3.50 per unit. In year 2, Bond 1 no longer contributes because it has matured, while Bond 2 contributes \$103.50 per unit and Bond 3 contributes \$3.50 per unit. In year 3, only Bond 3 contributes, with \$103.50 per unit.
 
 
 ## Problem 5 — Exercise 1.14
