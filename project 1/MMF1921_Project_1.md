@@ -74,9 +74,9 @@ We will implement the four factor models described below.
 
 We will construct a multi-factor model using all the factors shown in Table 2. The factor model for asset `i` should look like this:
 
-```text
-r_i - r_f = alpha_i + sum_{k=1}^8 beta_{ik} f_k + epsilon_i
-```
+$$
+r_i - r_f = \alpha_i + \sum_{k=1}^8 \beta_{ik} f_k + \epsilon_i
+$$
 
 where `r_i` is the return of asset `i`, `r_f` is the risk-free rate, `alpha_i` is the intercept from regression, `f_k` is the return of factor `k`, `beta_ik` is its corresponding factor loading, and `epsilon_i` is the stochastic error term of the asset.
 
@@ -86,9 +86,9 @@ The monthly factor returns for all eight factors and the monthly risk-free rate 
 
 The Fama-French three-factor model is a subset of our OLS model, where we use only the Market, Size, and Value factors from Table 2. The FF model is
 
-```text
-r_i - r_f = alpha_i + beta_im(f_m - r_f) + beta_is f_s + beta_iv f_v + epsilon_i
-```
+$$
+r_i - r_f = \alpha_i + \beta_{im}(f_m - r_f) + \beta_{is} f_s + \beta_{iv} f_v + \epsilon_i
+$$
 
 where `r_i` is the return of asset `i`, `r_f` is the risk-free rate, `alpha_i` is the intercept from regression, `(f_m - r_f)` is the excess market return factor and `beta_im` is its corresponding factor loading, `f_s` is the size factor and `beta_is` is its corresponding factor loading, `f_v` is the value factor and `beta_iv` is its corresponding factor loading, and `epsilon_i` is the stochastic error term of the asset.
 
@@ -98,9 +98,9 @@ The data for these factors is given as part of the data set provided. However, w
 
 We will use the penalized form of LASSO on all eight factors, where the model is the following:
 
-```text
-min_{B_i} ||r_i - X B_i||_2^2 + lambda ||B_i||_1
-```
+$$
+\min_{B_i} \|r_i - X B_i\|_2^2 + \lambda \|B_i\|_1
+$$
 
 As part of the research component of this project, we must select an appropriate value for `lambda` and we must justify our choice. Alternatively, we can test different values of `lambda` to study the impact on the resulting factor model. An ideal value of `lambda` will result in a sparse factor model where only two to five coefficients are non-zero. This accounts for both the factor loadings and the intercept. We will let LASSO determine whether we should include the intercept or not.
 
@@ -108,10 +108,12 @@ As part of the research component of this project, we must select an appropriate
 
 We will use the constrained form of the Best Subset Selection model using all eight factors as inputs. This version of BSS is the following:
 
-```text
-min_{B_i} ||r_i - X B_i||_2^2
-subject to ||B_i||_0 <= K
-```
+$$
+\begin{aligned}
+\min_{B_i} \quad & \|r_i - X B_i\|_2^2 \\
+\text{subject to} \quad & \|B_i\|_0 \le K
+\end{aligned}
+$$
 
 Our basis BSS model should have `K = 4`, i.e., we will construct a model with either four factors or three factors plus the intercept. We will let the BSS model determine whether we should include the intercept or not. As part of the research component of this project, you may want to test other values of `K` to study how this affects both the in-sample measures of fit and the out-of-sample portfolio performance.
 
