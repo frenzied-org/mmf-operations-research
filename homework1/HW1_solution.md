@@ -1,7 +1,6 @@
-# Homework assignment 1 solution
+# Homework 1 solution
 
-I used Python's `scipy.optimize.linprog` for the numerical parts.  The homework
-mentions MATLAB, but the models below are the same linear programs.
+### Gerard (Lezhi) Wu
 
 ## Problem 1
 

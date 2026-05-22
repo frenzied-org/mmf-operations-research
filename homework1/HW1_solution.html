@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HW1_solution.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> or <div class="page"></div> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="homework-1-solution">Homework 1 solution</h1>
+<h3 id="gerard-lezhi-wu">Gerard (Lezhi) Wu</h3>
+<h2 id="problem-1">Problem 1</h2>
+<p>Let $x_i$ be the number of shares sold of stock $i$, for $i = 1,\ldots,10$.
+The bounds are</p>
+<p>$$
+0 \leq x_i \leq 100.
+$$</p>
+<p>For each sold share, the net cash kept today is</p>
+<p>$$
+\text{net}_i
+= c_i - 0.30(c_i - p_i) - 0.01c_i,
+$$</p>
+<p>where $p_i$ is the purchase price and $c_i$ is the current price.</p>
+<p>The expected one-year value lost from selling $x_i$ shares is $f_i x_i$, where
+$f_i$ is the expected price in one year.  The starting portfolio is fixed, so
+maximizing the expected value left in the account is the same as minimizing the
+expected value sold.</p>
+<p>The linear program is</p>
+<p>$$
+\begin{aligned}
+\min \quad &amp; \sum_{i=1}^{10} f_i x_i \
+\text{subject to} \quad
+&amp; \sum_{i=1}^{10} \text{net}_i x_i = 30000, \
+&amp; 0 \leq x_i \leq 100,\quad i = 1,\ldots,10.
+\end{aligned}
+$$</p>
+<p>The optimal sales are:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Stock</th>
+<th style="text-align:right">Shares sold</th>
+<th style="text-align:right">Shares remaining</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">100.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">100.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td style="text-align:right">100.000000</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td style="text-align:right">100.000000</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">100.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td style="text-align:right">63.750749</td>
+<td style="text-align:right">36.249251</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td style="text-align:right">0.000000</td>
+<td style="text-align:right">100.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td style="text-align:right">100.000000</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">9</td>
+<td style="text-align:right">100.000000</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">10</td>
+<td style="text-align:right">100.000000</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+</tbody>
+</table>
+<p>These sales raise exactly $$30{,}000.00$ after taxes and transaction costs.
+The expected before-tax one-year value of the remaining portfolio is
+$$20{,}893.71$.</p>
+<h2 id="problem-2">Problem 2</h2>
+<p>Yes, the problem can be transformed into a linear program.</p>
+<p>Define</p>
+<p>$$
+y = x_2^2.
+$$</p>
+<p>Because $x_2 \geq 0$, every $y \geq 0$ corresponds to $x_2 = \sqrt{y}$.  The
+constraint $x_2^2 - x_3 = 0$ becomes</p>
+<p>$$
+y - x_3 = 0.
+$$</p>
+<p>The transformed problem is</p>
+<p>$$
+\begin{aligned}
+\min \quad &amp; 2x_1 + y + x_3 \
+\text{subject to} \quad
+&amp; y - x_3 = 0, \
+&amp; 5x_1 + 3x_3 \leq 5, \
+&amp; x_1, y, x_3 \geq 0.
+\end{aligned}
+$$</p>
+<p>To write it in equality standard form, add a slack variable $s \geq 0$:</p>
+<p>$$
+\begin{aligned}
+\min \quad &amp; 2x_1 + y + x_3 \
+\text{subject to} \quad
+&amp; y - x_3 = 0, \
+&amp; 5x_1 + 3x_3 + s = 5, \
+&amp; x_1, y, x_3, s \geq 0.
+\end{aligned}
+$$</p>
+<h2 id="problem-3">Problem 3</h2>
+<h3 id="part-a">Part (a)</h3>
+<p>Let $x_{ij}$ equal 1 if worker $i$ is assigned to project $j$, and 0 otherwise.
+The cost for an assignment is $$20$ times the number of hours.</p>
+<p>The linear program is</p>
+<p>$$
+\begin{aligned}
+\min \quad
+&amp; 20 \sum_{i=1}^{4}\sum_{j=1}^{4} h_{ij}x_{ij} \
+\text{subject to} \quad
+&amp; \sum_{j=1}^{4} x_{ij} = 1,\quad i = 1,\ldots,4, \
+&amp; \sum_{i=1}^{4} x_{ij} = 1,\quad j = 1,\ldots,4, \
+&amp; 0 \leq x_{ij} \leq 1,\quad i,j = 1,\ldots,4.
+\end{aligned}
+$$</p>
+<p>Here $h_{ij}$ is the number of hours required when worker $i$ does project $j$.</p>
+<h3 id="part-b">Part (b)</h3>
+<p>The Python linear-programming solution already has 0-1 values:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Worker</th>
+<th style="text-align:right">Assigned project</th>
+<th style="text-align:right">Hours</th>
+<th style="text-align:right">Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right">3</td>
+<td style="text-align:right">$$60$</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">5</td>
+<td style="text-align:right">$$100$</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td style="text-align:right">3</td>
+<td style="text-align:right">7</td>
+<td style="text-align:right">$$140$</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">8</td>
+<td style="text-align:right">$$160$</td>
+</tr>
+</tbody>
+</table>
+<p>The minimum total cost is</p>
+<p>$$
+60 + 100 + 140 + 160 = $460.
+$$</p>
+<h2 id="problem-4">Problem 4</h2>
+<p>Let:</p>
+<ul>
+<li>$b_t$ be units bought at the start of month $t$.</li>
+<li>$q_t$ be units sold at the start of month $t$.</li>
+<li>$I_t$ be inventory after the month-$t$ buying or selling decision.</li>
+<li>$I_0 = 2000$ be the initial inventory.</li>
+</ul>
+<p>I use the timing convention that the inventory cost $i_t$ is charged on the
+inventory carried into month $t$, namely $I_{t-1}$.  With that convention, the
+linear program is</p>
+<p>$$
+\begin{aligned}
+\max \quad
+&amp; \sum_{t=1}^{12} s_t q_t</p>
+<ul>
+<li>\sum_{t=1}^{12} p_t b_t</li>
+<li>\sum_{t=1}^{12} i_t I_{t-1} \
+\text{subject to} \quad
+&amp; I_t = I_{t-1} + b_t - q_t,\quad t = 1,\ldots,12, \
+&amp; I_0 = 2000, \
+&amp; I_{12} = 0, \
+&amp; 0 \leq I_t \leq 10000,\quad t = 0,\ldots,12, \
+&amp; b_t \geq 0,\quad q_t \geq 0,\quad t = 1,\ldots,12.
+\end{aligned}
+$$</li>
+</ul>
+<p>If the course interprets the inventory cost as being charged after the
+month-$t$ trade, replace $I_{t-1}$ in the objective with $I_t$.  The balance
+constraints remain the same.</p>
+<h2 id="problem-5">Problem 5</h2>
+<p>Let:</p>
+<ul>
+<li>$x_i$ be units purchased of bond $i$.</li>
+<li>$y_1$ be excess cash after paying the year-1 liability.</li>
+<li>$y_2$ be excess cash after paying the year-2 liability.</li>
+</ul>
+<p>The reinvestment rate is 2%, so one dollar of surplus becomes $1.02$ dollars
+one year later.</p>
+<p>The linear program is</p>
+<p>$$
+\begin{aligned}
+\min \quad
+&amp; 102x_1 + 99x_2 + 98x_3 \
+\text{subject to} \quad
+&amp; 105x_1 + 3.5x_2 + 3.5x_3 - y_1 = 12000, \
+&amp; 103.5x_2 + 3.5x_3 + 1.02y_1 - y_2 = 18000, \
+&amp; 103.5x_3 + 1.02y_2 = 20000, \
+&amp; x_1, x_2, x_3, y_1, y_2 \geq 0.
+\end{aligned}
+$$</p>
+<p>The Python solution is:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Variable</th>
+<th style="text-align:right">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">$x_1$</td>
+<td style="text-align:right">102.265208</td>
+</tr>
+<tr>
+<td style="text-align:right">$x_2$</td>
+<td style="text-align:right">167.378469</td>
+</tr>
+<tr>
+<td style="text-align:right">$x_3$</td>
+<td style="text-align:right">193.236715</td>
+</tr>
+<tr>
+<td style="text-align:right">$y_1$</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+<tr>
+<td style="text-align:right">$y_2$</td>
+<td style="text-align:right">0.000000</td>
+</tr>
+</tbody>
+</table>
+<p>The minimum cost is $$45{,}938.72$.</p>
+<p>Allowing excess cash generation and reinvestment can help because surplus cash
+in an early period is not wasted.  It earns interest and can pay later
+liabilities.  For this data set, the optimal solution uses no surplus cash, so
+reinvestment does not lower the minimum cost.</p>
+<h2 id="problem-6">Problem 6</h2>
+<p>Use path variables:</p>
+<ul>
+<li>$m$: flights from Calgary to Quebec City through Winnipeg and Montreal.</li>
+<li>$h$: flights from Calgary to Quebec City through Winnipeg and Hamilton.</li>
+<li>$r$: flights from Calgary to Quebec City through Winnipeg and Toronto.</li>
+</ul>
+<p>The linear program is</p>
+<p>$$
+\begin{aligned}
+\max \quad &amp; m + h + r \
+\text{subject to} \quad
+&amp; m + h + r \leq 5 &amp;&amp; \text{Calgary to Winnipeg}, \
+&amp; m \leq 4 &amp;&amp; \text{Winnipeg to Montreal}, \
+&amp; h \leq 5 &amp;&amp; \text{Winnipeg to Hamilton}, \
+&amp; r \leq 2 &amp;&amp; \text{Winnipeg to Toronto}, \
+&amp; m \leq 2 &amp;&amp; \text{Montreal to Quebec City}, \
+&amp; h \leq 1 &amp;&amp; \text{Hamilton to Quebec City}, \
+&amp; r \leq 3 &amp;&amp; \text{Toronto to Quebec City}, \
+&amp; m,h,r \geq 0.
+\end{aligned}
+$$</p>
+<p>The optimal schedule is:</p>
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th style="text-align:right">Daily flights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Calgary-Winnipeg-Montreal-Quebec City</td>
+<td style="text-align:right">2</td>
+</tr>
+<tr>
+<td>Calgary-Winnipeg-Hamilton-Quebec City</td>
+<td style="text-align:right">1</td>
+</tr>
+<tr>
+<td>Calgary-Winnipeg-Toronto-Quebec City</td>
+<td style="text-align:right">2</td>
+</tr>
+</tbody>
+</table>
+<p>The maximum number of daily flights from Calgary to Quebec City is 5.</p>
+
+</body>
+</html>
