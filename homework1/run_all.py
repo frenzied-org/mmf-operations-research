@@ -18,7 +18,9 @@ def main() -> None:
     for stock_number, sold in enumerate(stock_solution.sold_shares, start=1):
         print(f"  Stock {stock_number}: sell {sold:.6f} shares")
     print(f"  Net cash raised: {stock_solution.net_cash:.2f}")
-    print(f"  Expected one-year remaining value: {stock_solution.expected_remaining_value:.2f}")
+    print(
+        f"  Expected one-year remaining value: {stock_solution.expected_remaining_value:.2f}"
+    )
 
     print("\nProblem 2")
     print(get_standard_form())
@@ -41,7 +43,9 @@ def main() -> None:
     flight_solution = solve_flight_network()
     print("\nProblem 6")
     path_names = ["via Montreal", "via Hamilton", "via Toronto"]
-    for path_name, flights in zip(path_names, flight_solution.path_flights, strict=True):
+    for path_name, flights in zip(
+        path_names, flight_solution.path_flights, strict=True
+    ):
         print(f"  {path_name}: {flights:.6f}")
     print(f"  Maximum daily flights: {flight_solution.total_flights:.2f}")
 

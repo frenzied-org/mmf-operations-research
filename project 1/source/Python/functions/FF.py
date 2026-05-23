@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def FF(returns, factRet, lambda_, K):
     """
     % Use this function to calibrate the Fama-French 3-factor model. Note

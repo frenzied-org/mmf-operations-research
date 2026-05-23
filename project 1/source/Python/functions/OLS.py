@@ -1,7 +1,3 @@
-import cvxpy as cp
-import numpy as np
-
-
 def OLS(returns, factRet, lambda_, K):
     """
     % Use this function to perform an OLS regression. Note that you will

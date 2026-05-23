@@ -1,7 +1,3 @@
-import cvxpy as cp
-import numpy as np
-
-
 def MVO(mu, Q, targetRet):
     """
     % Use this function to construct your MVO portfolio subject to the

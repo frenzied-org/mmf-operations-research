@@ -1,7 +1,3 @@
-import cvxpy as cp
-import numpy as np
-
-
 def LASSO(returns, factRet, lambda_, K):
     """
     % Use this function for the LASSO model. Note that you will not use K
