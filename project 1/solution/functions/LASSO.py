@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import cvxpy as cp
 import numpy as np
-from scipy.optimize import minimize
 
 from model_utils import (
+    FactorModelResult,
     SELECTED_COEFFICIENT_TOLERANCE,
     as_numeric_matrix,
     covariance_from_factor_model,
     make_design_matrix,
 )
+
+
+CVXPY_SOLVERS = ("CLARABEL", "OSQP", "SCS")
 
 
 def _fit_lasso_for_asset(
@@ -25,38 +29,42 @@ def _fit_lasso_for_asset(
     asks the model to decide whether to include it.
     """
 
-    initial_coefficients = np.linalg.lstsq(design_matrix, asset_returns, rcond=None)[0]
+    coefficient_count = design_matrix.shape[1]
+    coefficient_variable = cp.Variable(coefficient_count)
+    residuals = asset_returns - design_matrix @ coefficient_variable
+    squared_error = cp.sum_squares(residuals)
+    absolute_penalty = float(lambda_) * cp.norm1(coefficient_variable)
+    problem = cp.Problem(cp.Minimize(squared_error + absolute_penalty))
 
-    def objective(coefficients: np.ndarray) -> float:
-        """Return the LASSO objective value for SciPy's optimizer."""
+    last_error: Exception | None = None
+    installed_solvers = set(cp.installed_solvers())
+    for solver_name in CVXPY_SOLVERS:
+        if solver_name not in installed_solvers:
+            continue
+        try:
+            problem.solve(solver=solver_name, verbose=False)
+        except cp.error.SolverError as error:
+            last_error = error
+            continue
 
-        residuals = asset_returns - design_matrix @ coefficients
-        squared_error = float(residuals @ residuals)
-        absolute_penalty = float(lambda_ * np.sum(np.abs(coefficients)))
+        if problem.status in {cp.OPTIMAL, cp.OPTIMAL_INACCURATE}:
+            coefficients = np.asarray(coefficient_variable.value, dtype=float)
+            coefficients[np.abs(coefficients) < SELECTED_COEFFICIENT_TOLERANCE] = 0.0
 
-        return squared_error + absolute_penalty
+            return coefficients
 
-    result = minimize(
-        objective,
-        initial_coefficients,
-        method="BFGS",
-        options={"gtol": 1.0e-8, "maxiter": 2000},
-    )
+    if last_error is not None:
+        raise RuntimeError("LASSO cvxpy solve failed.") from last_error
 
-    if result.success:
-        coefficients = result.x
-    else:
-        # The BFGS optimizer can report precision loss near the L1 kink even
-        # when the returned coefficients are usable. Keep the best available
-        # vector instead of failing the full experiment.
-        coefficients = result.x
-
-    coefficients[np.abs(coefficients) < SELECTED_COEFFICIENT_TOLERANCE] = 0.0
-
-    return coefficients
+    raise RuntimeError(f"LASSO cvxpy solve ended with status {problem.status!r}.")
 
 
-def LASSO(returns, factRet, lambda_, K):
+def LASSO(
+    returns: object,
+    factRet: object,
+    lambda_: float,
+    K: int,
+) -> FactorModelResult:
     """Estimate returns and covariance with a LASSO factor model.
 
     Parameters
@@ -96,6 +104,7 @@ def LASSO(returns, factRet, lambda_, K):
         np.abs(coefficients) > SELECTED_COEFFICIENT_TOLERANCE,
         axis=0,
     )
+    intercept_selected = np.abs(coefficients[0, :]) > SELECTED_COEFFICIENT_TOLERANCE
 
     factor_names = [
         "Mkt_RF",
@@ -113,6 +122,7 @@ def LASSO(returns, factRet, lambda_, K):
         coefficients=coefficients,
         observed_returns=observed_returns,
         selected_counts=selected_counts,
+        intercept_selected=intercept_selected,
         factor_names=factor_names,
         model_name="LASSO",
     )

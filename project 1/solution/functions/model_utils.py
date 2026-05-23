@@ -45,6 +45,10 @@ class FactorModelResult:
         One-dimensional vector with the number of non-zero coefficients used
         by each asset model. For ordinary least squares this is the full
         number of coefficients.
+    intercept_selected:
+        Boolean vector indicating whether each asset model uses a non-zero
+        intercept. This is needed because sparse models may omit the
+        intercept, and adjusted R-squared only penalizes explanatory factors.
     factor_names:
         Names of the factor columns used by the model.
     model_name:
@@ -58,6 +62,7 @@ class FactorModelResult:
     residuals: np.ndarray
     adjusted_r2: np.ndarray
     selected_counts: np.ndarray
+    intercept_selected: np.ndarray
     factor_names: list[str]
     model_name: str
 
@@ -127,13 +132,14 @@ def adjusted_r_squared(
     observed_returns: np.ndarray,
     fitted_returns: np.ndarray,
     selected_counts: np.ndarray,
+    intercept_selected: np.ndarray | None = None,
 ) -> np.ndarray:
     """Calculate adjusted R-squared for each asset.
 
     Adjusted R-squared is
     ``1 - (1 - R2) * (T - 1) / (T - p - 1)``, where ``T`` is the number of
-    monthly observations and ``p`` is the number of selected explanatory
-    variables excluding the intercept.
+    monthly observations and ``p`` is the number of selected factor
+    coefficients excluding the intercept.
     """
 
     observations = observed_returns.shape[0]
@@ -145,7 +151,13 @@ def adjusted_r_squared(
     safe_total_sum_squares = np.maximum(total_sum_squares, R2_EPSILON)
     r_squared = 1.0 - residual_sum_squares / safe_total_sum_squares
 
-    predictor_counts = np.maximum(selected_counts - 1, 0)
+    if intercept_selected is None:
+        intercept_flags = np.ones_like(selected_counts, dtype=bool)
+    else:
+        intercept_flags = np.asarray(intercept_selected, dtype=bool)
+
+    intercept_counts = intercept_flags.astype(int)
+    predictor_counts = np.maximum(selected_counts - intercept_counts, 0)
     denominator = np.maximum(observations - predictor_counts - 1, 1)
     adjustment = (observations - 1) / denominator
     adjusted_values = 1.0 - (1.0 - r_squared) * adjustment
@@ -160,6 +172,7 @@ def covariance_from_factor_model(
     selected_counts: np.ndarray,
     factor_names: list[str],
     model_name: str,
+    intercept_selected: np.ndarray | None = None,
 ) -> FactorModelResult:
     """Convert fitted regression coefficients into ``mu`` and ``Q``.
 
@@ -193,10 +206,14 @@ def covariance_from_factor_model(
     Q = 0.5 * (Q + Q.T)
     Q = Q + RIDGE_EPSILON * np.eye(Q.shape[0])
 
+    if intercept_selected is None:
+        intercept_selected = np.abs(coefficients[0, :]) > SELECTED_COEFFICIENT_TOLERANCE
+
     adjusted_r2 = adjusted_r_squared(
         observed_returns=observed_returns,
         fitted_returns=fitted_returns,
         selected_counts=selected_counts,
+        intercept_selected=intercept_selected,
     )
 
     return FactorModelResult(
@@ -207,6 +224,7 @@ def covariance_from_factor_model(
         residuals=np.asarray(residuals, dtype=float),
         adjusted_r2=np.asarray(adjusted_r2, dtype=float),
         selected_counts=np.asarray(selected_counts, dtype=int),
+        intercept_selected=np.asarray(intercept_selected, dtype=bool),
         factor_names=factor_names,
         model_name=model_name,
     )
@@ -225,12 +243,14 @@ def fit_least_squares_model(
     design_matrix = make_design_matrix(factors, factor_indices)
     coefficients = np.linalg.lstsq(design_matrix, observed_returns, rcond=None)[0]
     selected_counts = np.full(observed_returns.shape[1], design_matrix.shape[1])
+    intercept_selected = np.ones(observed_returns.shape[1], dtype=bool)
 
     return covariance_from_factor_model(
         design_matrix=design_matrix,
         coefficients=coefficients,
         observed_returns=observed_returns,
         selected_counts=selected_counts,
+        intercept_selected=intercept_selected,
         factor_names=factor_names,
         model_name=model_name,
     )

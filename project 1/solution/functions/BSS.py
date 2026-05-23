@@ -5,6 +5,8 @@ from __future__ import annotations
 import numpy as np
 
 from model_utils import (
+    FactorModelResult,
+    SELECTED_COEFFICIENT_TOLERANCE,
     as_numeric_matrix,
     all_subsets,
     covariance_from_factor_model,
@@ -50,7 +52,12 @@ def _fit_best_subset_for_asset(
     return best_coefficients
 
 
-def BSS(returns, factRet, lambda_, K):
+def BSS(
+    returns: object,
+    factRet: object,
+    lambda_: float,
+    K: int,
+) -> FactorModelResult:
     """Estimate returns and covariance with Best Subset Selection.
 
     Parameters
@@ -84,7 +91,11 @@ def BSS(returns, factRet, lambda_, K):
             K=int(K),
         )
 
-    selected_counts = np.sum(coefficients != 0.0, axis=0)
+    selected_counts = np.sum(
+        np.abs(coefficients) > SELECTED_COEFFICIENT_TOLERANCE,
+        axis=0,
+    )
+    intercept_selected = np.abs(coefficients[0, :]) > SELECTED_COEFFICIENT_TOLERANCE
     factor_names = [
         "Mkt_RF",
         "SMB",
@@ -101,6 +112,7 @@ def BSS(returns, factRet, lambda_, K):
         coefficients=coefficients,
         observed_returns=observed_returns,
         selected_counts=selected_counts,
+        intercept_selected=intercept_selected,
         factor_names=factor_names,
         model_name="BSS",
     )

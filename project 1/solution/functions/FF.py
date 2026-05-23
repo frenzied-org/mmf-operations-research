@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
-from model_utils import fit_least_squares_model
+from model_utils import FactorModelResult, fit_least_squares_model
 
 
-def FF(returns, factRet, lambda_, K):
+def FF(
+    returns: object,
+    factRet: object,
+    lambda_: float,
+    K: int,
+) -> FactorModelResult:
     """Estimate returns and covariance with the first three factors.
 
     Parameters

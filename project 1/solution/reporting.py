@@ -122,7 +122,7 @@ $$
 \\min_B \\|y - X B\\|_2^2 + \\lambda \\|B\\|_1
 $$
 
-where $y$ is the asset excess-return vector, $X$ is the intercept-plus-factor matrix, $B$ is the coefficient vector, and $\\lambda$ is the penalty weight. I used $\\lambda = 0.04$, which produced about four selected coefficients on average and therefore matched the assignment's target sparse range.
+where $y$ is the asset excess-return vector, $X$ is the intercept-plus-factor matrix, $B$ is the coefficient vector, and $\\lambda$ is the penalty weight. I used $\\lambda = 0.04$. This value keeps the model sparse, with about three selected coefficients on average across all assets and calibration windows, while still retaining useful explanatory power. The Python code formulates the LASSO objective directly in `cvxpy`, so the absolute-value penalty is handled as a convex optimization problem rather than as an ordinary smooth least-squares regression.
 
 BSS solves the same least-squares fit subject to at most $K$ non-zero coefficients:
 
@@ -130,7 +130,7 @@ $$
 \\min_B \\|y - X B\\|_2^2 \\quad \\text{{subject to}} \\quad \\|B\\|_0 \\le K
 $$
 
-where $\\|B\\|_0$ counts non-zero coefficients. I used the assignment baseline $K = 4$. Since there are only nine possible coefficients, one intercept plus eight factor loadings, the Python implementation uses exact exhaustive search over all subsets of size at most four.
+where $\\|B\\|_0$ counts non-zero coefficients. I used the assignment baseline $K = 4$. Since there are only nine possible coefficients, one intercept plus eight factor loadings, the Python implementation uses exact exhaustive search over all subsets of size at most four. This gives the true best subset for this small project instance, rather than a heuristic approximation.
 
 For each model, the expected excess-return vector $\\mu$ is the fitted model's mean prediction over the calibration window. The covariance matrix $Q$ is
 
@@ -154,13 +154,17 @@ $$
 
 where $x$ is the portfolio-weight vector and $r_{{target}}$ is the geometric mean of the market factor over the calibration window.
 
+The MVO problem is also solved with `cvxpy`. If a target return were infeasible under long-only weights, the implementation would report the infeasibility instead of silently lowering the target. In this experiment, all five calibration-window targets were feasible for all four factor-model estimates.
+
 ## In-Sample Results
 
-The adjusted $R^2$ statistic measures fit while penalizing models that use more explanatory variables. The table below averages the period-level mean adjusted $R^2$ values across the five calibration windows.
+The adjusted $R^2$ statistic measures fit while penalizing models that use more explanatory variables. In the sparse models, the penalty counts selected factor coefficients only. The intercept is not treated as an explanatory factor because BSS and LASSO are allowed to omit it. The table below averages the period-level mean adjusted $R^2$ values across the five calibration windows.
 
 {markdown_table(["Model", "Mean adjusted R2", "Mean selected coefficients"], fit_summary_rows)}
 
 Full period-level fit output is saved in `outputs/tables/in_sample_fit_summary.csv`.
+
+BSS has the strongest average adjusted $R^2$ even though it is limited to four non-zero coefficients. This means the exact subset search found compact factor combinations that fit the calibration data better than the full eight-factor OLS model after the adjustment penalty. OLS is second, which is expected because it has the most raw flexibility but pays the largest adjusted-$R^2$ penalty. FF has lower fit because it ignores profitability, investment, momentum, and reversal factors. LASSO is the sparsest model on average, so its lower in-sample fit is the cost of stronger shrinkage.
 
 ## Out-of-Sample Results
 
@@ -174,17 +178,19 @@ The BSS model's rebalance weights are shown below as a representative sparse-mod
 
 ![BSS portfolio weights](outputs/figures/bss_weights.svg)
 
+OLS, FF, and LASSO finish with very similar wealth. LASSO has the highest annualized return in this run, but it also has the highest annualized volatility, so its Sharpe ratio remains below OLS and FF. OLS has the highest Sharpe ratio among the four models. BSS has the best in-sample adjusted fit, but it performs worst out of sample. That is a useful warning: a factor model can explain the calibration window well and still produce less attractive portfolio weights for future returns.
+
 ## Discussion
 
-OLS has the most flexible unrestricted factor exposure because it uses all eight factors. That can improve in-sample fit, but it also increases the risk that the model fits noise in a four-year monthly window. FF is simpler and easier to interpret, but it can miss effects captured by profitability, investment, momentum, and reversal factors.
+OLS has the most flexible unrestricted factor exposure because it uses all eight factors. That can improve in-sample fit, but it also increases the risk that the model fits noise in a four-year monthly window. A four-year monthly calibration window has only 48 observations, so estimating many coefficients can be noisy. FF is simpler and easier to interpret, but it can miss effects captured by profitability, investment, momentum, and reversal factors.
 
 LASSO and BSS are sparse approaches. Sparse means many coefficients are forced to zero. This can reduce estimation noise and make factor exposures easier to interpret. The tradeoff is that sparsity can omit useful but weaker factors. BSS is especially direct here because the exhaustive search is exact for this small problem.
 
-The out-of-sample performance table should be read together with the allocation plots. A model with strong final wealth but high concentration may be taking more stock-specific risk. A lower-volatility model may be preferable if the goal is stable wealth rather than only final portfolio value.
+The out-of-sample performance table should be read together with the allocation plots. A model with strong final wealth but high concentration may be taking more stock-specific risk. A lower-volatility model may be preferable if the goal is stable wealth rather than only final portfolio value. The main empirical lesson is that the best in-sample factor fit is not automatically the best portfolio model. Portfolio optimization depends on both estimated returns and estimated covariances, and small estimation errors can have a large effect on optimal weights.
 
 ## Conclusion
 
-All four factor models can be used to produce the expected returns and covariance matrices required by mean-variance optimization. The experiment shows how estimation choices flow into portfolio construction: unrestricted models can fit more in sample, while sparse models can create cleaner and sometimes more stable out-of-sample allocations. The best model depends on whether the investor values interpretability, diversification, final wealth, or risk-adjusted performance most.
+All four factor models can be used to produce the expected returns and covariance matrices required by mean-variance optimization. The experiment shows how estimation choices flow into portfolio construction: unrestricted models can fit more in sample, while sparse models create cleaner and more interpretable factor exposures. In this run, OLS and FF delivered the best risk-adjusted out-of-sample performance, LASSO delivered a similar final value with more volatility, and BSS showed that strong in-sample fit does not guarantee strong out-of-sample wealth. The best model depends on whether the investor values interpretability, diversification, final wealth, or risk-adjusted performance most.
 
 ## Reproducibility
 

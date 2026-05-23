@@ -21,6 +21,7 @@ from BSS import BSS  # noqa: E402
 from FF import FF  # noqa: E402
 from LASSO import LASSO  # noqa: E402
 from MVO import MVO  # noqa: E402
+from model_utils import adjusted_r_squared  # noqa: E402
 from OLS import OLS  # noqa: E402
 
 
@@ -88,6 +89,30 @@ def test_lasso_and_bss_return_sparse_metadata() -> None:
     assert np.all(np.linalg.eigvalsh(bss_result.Q) > -1e-10)
 
 
+def test_adjusted_r_squared_counts_selected_factors_not_intercept() -> None:
+    """Adjusted R2 should penalize selected factors, not assume an intercept."""
+
+    observations = np.array([[1.0], [2.0], [3.0], [4.0], [5.0]])
+    fitted = np.array([[1.0], [2.1], [2.9], [4.1], [4.9]])
+    selected_counts = np.array([2])
+    intercept_selected = np.array([False])
+
+    adjusted_values = adjusted_r_squared(
+        observed_returns=observations,
+        fitted_returns=fitted,
+        selected_counts=selected_counts,
+        intercept_selected=intercept_selected,
+    )
+
+    residual_sum_squares = float(np.sum((observations - fitted) ** 2))
+    centered = observations - observations.mean(axis=0)
+    total_sum_squares = float(np.sum(centered**2))
+    r_squared = 1.0 - residual_sum_squares / total_sum_squares
+    expected_adjusted = 1.0 - (1.0 - r_squared) * (5 - 1) / (5 - 2 - 1)
+
+    assert np.allclose(adjusted_values, np.array([expected_adjusted]))
+
+
 def test_mvo_respects_budget_target_and_no_short_sales() -> None:
     """MVO weights should sum to one and satisfy no-short-sale constraints."""
 
@@ -108,13 +133,39 @@ def test_mvo_respects_budget_target_and_no_short_sales() -> None:
     assert weights @ mu >= 0.018 - 1e-8
 
 
+def test_mvo_reports_infeasible_target_instead_of_relaxing_it() -> None:
+    """MVO should not silently lower the assignment's target return."""
+
+    mu = np.array([0.01, 0.02])
+    Q = np.eye(2)
+
+    try:
+        MVO(mu, Q, targetRet=0.03)
+    except ValueError as error:
+        assert "target return" in str(error)
+    else:
+        raise AssertionError("MVO should reject infeasible target returns.")
+
+
+def test_notebook_uses_portable_project_root() -> None:
+    """The submitted notebook should not contain a machine-specific path."""
+
+    notebook_path = PROJECT_ROOT / "MMF1921_Project_1_Solution.ipynb"
+    notebook_text = notebook_path.read_text()
+
+    assert "/Users/gwh/" not in notebook_text
+
+
 def main() -> None:
     """Run all tests in this module."""
 
     test_ols_returns_expected_mean_and_covariance()
     test_ff_uses_first_three_factors()
     test_lasso_and_bss_return_sparse_metadata()
+    test_adjusted_r_squared_counts_selected_factors_not_intercept()
     test_mvo_respects_budget_target_and_no_short_sales()
+    test_mvo_reports_infeasible_target_instead_of_relaxing_it()
+    test_notebook_uses_portable_project_root()
     print("All Project 1 tests passed.")
 
 
