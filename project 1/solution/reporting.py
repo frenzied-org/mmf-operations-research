@@ -1,24 +1,33 @@
-"""Question 3 script: generate the final Markdown report."""
+"""Markdown report helpers for MMF1921 Project 1.
+
+The notebook uses this module to keep report generation reproducible while
+leaving the instructor-provided ``source`` folder unchanged.
+"""
 
 from __future__ import annotations
 
 from pathlib import Path
 import csv
-import sys
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent
-SOLUTION_DIR = PROJECT_ROOT / "solution"
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 TABLE_DIR = PROJECT_ROOT / "outputs" / "tables"
-FIGURE_DIR = PROJECT_ROOT / "outputs" / "figures"
 REPORT_PATH = PROJECT_ROOT / "MMF1921_Project_1_Final_Report.md"
-sys.path.insert(0, str(SOLUTION_DIR))
-
-from project1_core import run_experiment, write_experiment_tables, write_figures  # noqa: E402
 
 
 def read_csv_rows(path: Path) -> tuple[list[str], list[list[str]]]:
-    """Read a CSV file as a header and rows."""
+    """Read a CSV file as a header and rows.
+
+    Parameters
+    ----------
+    path:
+        CSV path to read.
+
+    Returns
+    -------
+    tuple[list[str], list[list[str]]]
+        Header row and all remaining data rows.
+    """
 
     with path.open(newline="") as file:
         reader = csv.reader(file)
@@ -66,16 +75,16 @@ def summarize_fit_by_model(rows: list[list[str]]) -> list[list[str]]:
     return summary_rows
 
 
-def write_report() -> None:
-    """Write the final project report in Markdown format."""
+def build_report_text() -> str:
+    """Build the final project report as Markdown text."""
 
-    fit_header, fit_rows = read_csv_rows(TABLE_DIR / "in_sample_fit_summary.csv")
+    _, fit_rows = read_csv_rows(TABLE_DIR / "in_sample_fit_summary.csv")
     performance_header, performance_rows = read_csv_rows(
         TABLE_DIR / "performance_summary.csv"
     )
     fit_summary_rows = summarize_fit_by_model(fit_rows)
 
-    report = f"""# MMF1921 Project 1: Factor Models and Mean-Variance Optimization
+    return f"""# MMF1921 Project 1: Factor Models and Mean-Variance Optimization
 
 ## Introduction
 
@@ -183,26 +192,18 @@ Run the project from the `project 1` folder:
 
 ```bash
 uv run python tests/run_tests.py
-uv run python q1_factor_models.py
-uv run python q2_portfolio_optimization.py
-uv run python q3_results_report.py
 ```
 
-The scripts use only Python and the data supplied in `source/Python/`.
+Then open and run `MMF1921_Project_1_Solution.ipynb`.
+
+The notebook uses only Python and the data supplied in `source/Python/`.
 """
 
-    REPORT_PATH.write_text(report)
 
+def write_report() -> Path:
+    """Write the final project report and return its path."""
 
-def main() -> None:
-    """Run the experiment and write the Markdown report."""
+    report_text = build_report_text()
+    REPORT_PATH.write_text(report_text)
 
-    results = run_experiment()
-    write_experiment_tables(results)
-    write_figures(results)
-    write_report()
-    print(f"Wrote final report to {REPORT_PATH.name}.")
-
-
-if __name__ == "__main__":
-    main()
+    return REPORT_PATH

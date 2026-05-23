@@ -116,9 +116,8 @@ Run the project from the `project 1` folder:
 
 ```bash
 uv run python tests/run_tests.py
-uv run python q1_factor_models.py
-uv run python q2_portfolio_optimization.py
-uv run python q3_results_report.py
 ```
 
-The scripts use only Python and the data supplied in `source/Python/`.
+Then open and run `MMF1921_Project_1_Solution.ipynb`.
+
+The notebook uses only Python and the data supplied in `source/Python/`.
