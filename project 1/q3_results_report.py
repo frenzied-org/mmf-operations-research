@@ -70,7 +70,9 @@ def write_report() -> None:
     """Write the final project report in Markdown format."""
 
     fit_header, fit_rows = read_csv_rows(TABLE_DIR / "in_sample_fit_summary.csv")
-    performance_header, performance_rows = read_csv_rows(TABLE_DIR / "performance_summary.csv")
+    performance_header, performance_rows = read_csv_rows(
+        TABLE_DIR / "performance_summary.csv"
+    )
     fit_summary_rows = summarize_fit_by_model(fit_rows)
 
     report = f"""# MMF1921 Project 1: Factor Models and Mean-Variance Optimization

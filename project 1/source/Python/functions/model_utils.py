@@ -94,7 +94,9 @@ def as_numeric_matrix(values: object) -> np.ndarray:
     return matrix
 
 
-def make_design_matrix(factors: object, factor_indices: list[int] | None = None) -> np.ndarray:
+def make_design_matrix(
+    factors: object, factor_indices: list[int] | None = None
+) -> np.ndarray:
     """Build a regression design matrix with an intercept column.
 
     Parameters

@@ -97,8 +97,12 @@ def load_market_data() -> MarketData:
         Clean matrices with aligned monthly excess returns.
     """
 
-    price_header, price_rows = read_csv_table(PYTHON_SOURCE_DIR / "MMF1921_AssetPrices.csv")
-    factor_header, factor_rows = read_csv_table(PYTHON_SOURCE_DIR / "MMF1921_FactorReturns.csv")
+    price_header, price_rows = read_csv_table(
+        PYTHON_SOURCE_DIR / "MMF1921_AssetPrices.csv"
+    )
+    factor_header, factor_rows = read_csv_table(
+        PYTHON_SOURCE_DIR / "MMF1921_FactorReturns.csv"
+    )
 
     price_dates = [row[0] for row in price_rows]
     tickers = price_header[1:]
@@ -107,9 +111,13 @@ def load_market_data() -> MarketData:
     factor_dates = [row[0] for row in factor_rows]
     stripped_factor_header = [name.strip() for name in factor_header]
     risk_free_index = stripped_factor_header.index("RF")
-    factor_indices = [index for index in range(1, len(factor_header)) if index != risk_free_index]
+    factor_indices = [
+        index for index in range(1, len(factor_header)) if index != risk_free_index
+    ]
     factor_names = [stripped_factor_header[index] for index in factor_indices]
-    factors = np.array([[float(row[index]) for index in factor_indices] for row in factor_rows])
+    factors = np.array(
+        [[float(row[index]) for index in factor_indices] for row in factor_rows]
+    )
     risk_free = np.array([float(row[risk_free_index]) for row in factor_rows])
 
     simple_returns = prices[1:, :] / prices[:-1, :] - 1.0
@@ -189,7 +197,8 @@ def run_experiment() -> dict[str, object]:
 
     current_values = {model_name: INITIAL_PORTFOLIO_VALUE for model_name in MODEL_NAMES}
     current_shares = {
-        model_name: np.zeros(len(data.tickers), dtype=float) for model_name in MODEL_NAMES
+        model_name: np.zeros(len(data.tickers), dtype=float)
+        for model_name in MODEL_NAMES
     }
 
     for period_index in range(5):
@@ -217,11 +226,15 @@ def run_experiment() -> dict[str, object]:
 
         if period_index > 0:
             for model_name in MODEL_NAMES:
-                current_values[model_name] = float(rebalance_prices @ current_shares[model_name])
+                current_values[model_name] = float(
+                    rebalance_prices @ current_shares[model_name]
+                )
 
         target_return = geometric_mean_return(calibration_factors[:, 0])
         model_results = [
-            model_function(calibration_returns, calibration_factors, LASSO_LAMBDA, BSS_K)
+            model_function(
+                calibration_returns, calibration_factors, LASSO_LAMBDA, BSS_K
+            )
             for model_function in MODEL_FUNCTIONS
         ]
 
@@ -256,7 +269,9 @@ def run_experiment() -> dict[str, object]:
                 )
 
             weights = MVO(result.mu, result.Q, target_return)
-            current_shares[model_name] = weights * current_values[model_name] / rebalance_prices
+            current_shares[model_name] = (
+                weights * current_values[model_name] / rebalance_prices
+            )
 
             for ticker, weight in zip(data.tickers, weights):
                 weight_rows.append(
@@ -270,7 +285,9 @@ def run_experiment() -> dict[str, object]:
                 )
 
             if not wealth_by_model[model_name]:
-                wealth_by_model[model_name].append((rebalance_date, current_values[model_name]))
+                wealth_by_model[model_name].append(
+                    (rebalance_date, current_values[model_name])
+                )
                 wealth_rows.append(
                     [
                         rebalance_date,
@@ -286,11 +303,15 @@ def run_experiment() -> dict[str, object]:
 
     performance_rows: list[list[object]] = []
     for model_name in MODEL_NAMES:
-        values = np.array([value for _, value in wealth_by_model[model_name]], dtype=float)
+        values = np.array(
+            [value for _, value in wealth_by_model[model_name]], dtype=float
+        )
         monthly_returns = values[1:] / values[:-1] - 1.0
         average_monthly_return = float(np.mean(monthly_returns))
         monthly_volatility = float(np.std(monthly_returns, ddof=1))
-        annualized_return = (1.0 + average_monthly_return) ** TRADING_MONTHS_PER_YEAR - 1.0
+        annualized_return = (
+            1.0 + average_monthly_return
+        ) ** TRADING_MONTHS_PER_YEAR - 1.0
         annualized_volatility = monthly_volatility * np.sqrt(TRADING_MONTHS_PER_YEAR)
         sharpe_ratio = annualized_return / annualized_volatility
         final_value = float(values[-1])
@@ -414,8 +435,12 @@ def write_wealth_svg(wealth_by_model: dict[str, list[tuple[str, float]]]) -> Non
     for index, model_name in enumerate(MODEL_NAMES):
         y_position = 58 + 22 * index
         color = colors[model_name]
-        lines.append(f'<rect x="{width - 150}" y="{y_position - 10}" width="12" height="12" fill="{color}"/>')
-        lines.append(f'<text x="{width - 130}" y="{y_position}" font-size="13" font-family="Arial">{model_name}</text>')
+        lines.append(
+            f'<rect x="{width - 150}" y="{y_position - 10}" width="12" height="12" fill="{color}"/>'
+        )
+        lines.append(
+            f'<text x="{width - 130}" y="{y_position}" font-size="13" font-family="Arial">{model_name}</text>'
+        )
 
     lines.append("</svg>")
     (FIGURE_DIR / "wealth_evolution.svg").write_text("\n".join(lines))
@@ -486,8 +511,12 @@ def write_weights_svg(weight_rows: list[list[object]]) -> None:
     for index, ticker in enumerate(active_tickers[:10]):
         y_position = 58 + 20 * index
         color = palette[index % len(palette)]
-        lines.append(f'<rect x="{width - 150}" y="{y_position - 10}" width="12" height="12" fill="{color}"/>')
-        lines.append(f'<text x="{width - 130}" y="{y_position}" font-size="13" font-family="Arial">{ticker}</text>')
+        lines.append(
+            f'<rect x="{width - 150}" y="{y_position - 10}" width="12" height="12" fill="{color}"/>'
+        )
+        lines.append(
+            f'<text x="{width - 130}" y="{y_position}" font-size="13" font-family="Arial">{ticker}</text>'
+        )
 
     lines.append("</svg>")
     (FIGURE_DIR / "bss_weights.svg").write_text("\n".join(lines))
