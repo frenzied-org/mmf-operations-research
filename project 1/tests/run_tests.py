@@ -14,7 +14,7 @@ import numpy as np
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-FUNCTIONS_DIR = PROJECT_ROOT / "source" / "Python" / "functions"
+FUNCTIONS_DIR = PROJECT_ROOT / "solution" / "functions"
 sys.path.insert(0, str(FUNCTIONS_DIR))
 
 from BSS import BSS  # noqa: E402

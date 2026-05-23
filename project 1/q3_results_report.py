@@ -8,11 +8,11 @@ import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-SOURCE_DIR = PROJECT_ROOT / "source" / "Python"
+SOLUTION_DIR = PROJECT_ROOT / "solution"
 TABLE_DIR = PROJECT_ROOT / "outputs" / "tables"
 FIGURE_DIR = PROJECT_ROOT / "outputs" / "figures"
 REPORT_PATH = PROJECT_ROOT / "MMF1921_Project_1_Final_Report.md"
-sys.path.insert(0, str(SOURCE_DIR))
+sys.path.insert(0, str(SOLUTION_DIR))
 
 from project1_core import run_experiment, write_experiment_tables, write_figures  # noqa: E402
 

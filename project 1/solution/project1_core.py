@@ -15,9 +15,9 @@ import sys
 import numpy as np
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PYTHON_SOURCE_DIR = PROJECT_ROOT / "source" / "Python"
-FUNCTIONS_DIR = PYTHON_SOURCE_DIR / "functions"
+FUNCTIONS_DIR = PROJECT_ROOT / "solution" / "functions"
 OUTPUT_DIR = PROJECT_ROOT / "outputs"
 TABLE_DIR = OUTPUT_DIR / "tables"
 FIGURE_DIR = OUTPUT_DIR / "figures"

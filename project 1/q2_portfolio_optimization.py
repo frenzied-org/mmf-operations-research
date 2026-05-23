@@ -7,8 +7,8 @@ import sys
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-SOURCE_DIR = PROJECT_ROOT / "source" / "Python"
-sys.path.insert(0, str(SOURCE_DIR))
+SOLUTION_DIR = PROJECT_ROOT / "solution"
+sys.path.insert(0, str(SOLUTION_DIR))
 
 from project1_core import run_experiment, write_experiment_tables, write_figures  # noqa: E402
 
