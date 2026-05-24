@@ -115,15 +115,3 @@ The out-of-sample performance table should be read together with the allocation 
 ## Conclusion
 
 Each factor model supplies the expected-return vector and covariance matrix needed for mean-variance optimization, but the resulting portfolios differ. In this run, OLS and FF have the best risk-adjusted out-of-sample performance. LASSO ends at a similar final value with greater volatility. BSS has the strongest in-sample adjusted fit and the weakest out-of-sample wealth, showing that calibration fit alone is not a sufficient model-selection criterion. A choice among these models must reflect the investor's priority: interpretability, diversification, final wealth, or risk-adjusted performance.
-
-## Reproducibility
-
-Run the project from the `project 1` folder:
-
-```bash
-uv run python tests/run_tests.py
-```
-
-Then open and run `MMF1921_Project_1_Solution.ipynb`.
-
-The notebook uses Python and the supplied data in `source/Python/`.
