@@ -2,17 +2,17 @@
 
 ## Introduction
 
-I compare four linear factor models for a 20-stock U.S. equity universe: ordinary least squares (OLS), Fama-French three-factor regression (FF), least absolute shrinkage and selection operator (LASSO), and Best Subset Selection (BSS). Each model estimates monthly expected excess returns and covariance matrices. I then use those estimates in a long-only mean-variance optimization strategy tested from January 2012 through December 2016.
+This report compares four linear factor models for a 20-stock U.S. equity universe: ordinary least squares (OLS), Fama-French three-factor regression (FF), least absolute shrinkage and selection operator (LASSO), and Best Subset Selection (BSS). Each model estimates monthly expected excess returns and covariance matrices. Those estimates are then used in a long-only mean-variance optimization strategy tested from January 2012 through December 2016.
 
-An excess return is an asset return minus the risk-free rate. I use excess returns because the factor data provides a monthly risk-free rate and the regressions are specified in excess-return form.
+An excess return is an asset return minus the risk-free rate. Excess returns are used because the factor data provides a monthly risk-free rate and the regressions are specified in excess-return form.
 
 ## Data
 
-The stock data contains monthly adjusted close prices for 20 stocks from 31-Dec-2005 to 31-Dec-2016. I compute monthly stock returns from adjacent adjusted close prices. The factor data contains eight monthly factor returns and the risk-free rate from 31-Jan-2006 to 31-Dec-2016. Once the stock returns are computed, their dates match the factor-return dates exactly.
+The stock data contains monthly adjusted close prices for 20 stocks from 31-Dec-2005 to 31-Dec-2016. Monthly stock returns are computed from adjacent adjusted close prices. The factor data contains eight monthly factor returns and the risk-free rate from 31-Jan-2006 to 31-Dec-2016. Once the stock returns are computed, their dates match the factor-return dates exactly.
 
 ## Methodology
 
-At each annual rebalance, I calibrate the models on the immediately preceding four years. For example, the January 2012 portfolio uses data from January 2008 through December 2011. The out-of-sample test covers five years: 2012 through 2016.
+At each annual rebalance, the models are calibrated on the immediately preceding four years. For example, the January 2012 portfolio uses data from January 2008 through December 2011. The out-of-sample test covers five years: 2012 through 2016.
 
 For asset $i$, monthly excess return is
 
@@ -36,7 +36,18 @@ $$
 \min_B \|y - X B\|_2^2 + \lambda \|B\|_1
 $$
 
-where $y$ is the asset excess-return vector, $X$ is the intercept-plus-factor matrix, $B$ is the coefficient vector, and $\lambda$ is the penalty weight. I used $\lambda = 0.04$. Across all assets and calibration windows, this setting selects about three coefficients on average while retaining useful explanatory power. The Python code formulates the LASSO objective directly in `cvxpy`. The absolute-value penalty is therefore part of a convex optimization problem, rather than an ordinary smooth least-squares regression.
+where $y$ is the asset excess-return vector, $X$ is the intercept-plus-factor matrix, $B$ is the coefficient vector, and $\lambda$ is the penalty weight. The LASSO penalty was set to $\lambda = 0.04$. Several nearby values were tested to compare sparsity and in-sample fit:
+
+| lambda | Mean adjusted R2 | Mean selected coefficients |
+| --- | --- | --- |
+| 0.005 | 0.4409 | 7.01 |
+| 0.010 | 0.4126 | 5.60 |
+| 0.020 | 0.3633 | 3.99 |
+| 0.040 | 0.3063 | 2.74 |
+| 0.080 | 0.2196 | 1.89 |
+| 0.120 | 0.1596 | 1.59 |
+
+Smaller penalties retain more factors and produce higher adjusted $R^2$, but they are less sparse than the assignment's suggested range of roughly two to five non-zero coefficients. The value $\lambda = 0.04$ was selected because it produces a compact model, with about three selected coefficients on average, while preserving enough explanatory power for the portfolio experiment. The Python code formulates the LASSO objective directly in `cvxpy`. The absolute-value penalty is therefore part of a convex optimization problem, rather than an ordinary smooth least-squares regression.
 
 BSS solves the same least-squares fit subject to at most $K$ non-zero coefficients:
 
@@ -44,7 +55,7 @@ $$
 \min_B \|y - X B\|_2^2 \quad \text{subject to} \quad \|B\|_0 \le K
 $$
 
-where $\|B\|_0$ counts non-zero coefficients. I used the assignment baseline $K = 4$. There are only nine possible coefficients: one intercept and eight factor loadings. The Python implementation can therefore search every subset of size at most four and obtain the exact best subset for this problem, with no heuristic approximation.
+where $\|B\|_0$ counts non-zero coefficients. The assignment baseline $K = 4$ is used. There are only nine possible coefficients: one intercept and eight factor loadings. The Python implementation can therefore search every subset of size at most four and obtain the exact best subset for this problem, with no heuristic approximation.
 
 For each model, the expected excess-return vector $\mu$ is the fitted model's mean prediction over the calibration window. The covariance matrix $Q$ is
 
@@ -68,7 +79,7 @@ $$
 
 where $x$ is the portfolio-weight vector and $r_{target}$ is the geometric mean of the market factor over the calibration window.
 
-I also solve the mean-variance optimization problem with `cvxpy`. If a target return were infeasible under long-only weights, the implementation would report infeasibility rather than silently lower the target. All five calibration-window targets were feasible under each of the four factor-model estimates.
+The mean-variance optimization problem is also solved with `cvxpy`. If a target return were infeasible under long-only weights, the implementation would report infeasibility rather than silently lower the target. All five calibration-window targets were feasible under each of the four factor-model estimates.
 
 ## In-Sample Results
 
