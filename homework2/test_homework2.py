@@ -6,12 +6,11 @@ import unittest
 
 import numpy as np
 
-from exercise28_feasible_region import (
-    get_basic_feasible_solutions as exercise28_solutions,
-)
-from exercise29_basic_solutions import solve_exercise_23a, solve_exercise_23b
-from exercise34_unbounded import solve_exercise_34
-from exercise35_simplex import solve_exercise_35
+from exercise28 import get_basic_feasible_solutions as exercise28_solutions
+from exercise29 import solve_exercise_23a, solve_exercise_23b
+from exercise211 import objective_improvement
+from exercise34 import solve_exercise_34
+from exercise35 import solve_exercise_35
 
 
 class BasicFeasibleSolutionTests(unittest.TestCase):
@@ -73,6 +72,24 @@ class SimplexTests(unittest.TestCase):
         self.assertAlmostEqual(solution.simplex_result.objective_value, -3.0)
         np.testing.assert_allclose(solution.simplex_result.solution[:2], [0.0, 3.0])
         np.testing.assert_allclose(solution.second_optimal_point, [6.0, 3.0])
+        self.assertEqual(
+            [
+                iteration.iteration_number
+                for iteration in solution.simplex_result.iterations
+            ],
+            [0, 1],
+        )
+
+
+class StrictFeasibleSetTests(unittest.TestCase):
+    """Check the constructive objective improvement used in Exercise 2.11."""
+
+    def test_exercise_211_move_in_direction_c_strictly_improves_objective(self) -> None:
+        """A positive move in a nonzero objective direction raises its value."""
+
+        direction = np.array([3.0, -4.0])
+
+        self.assertAlmostEqual(objective_improvement(direction, step_size=0.25), 6.25)
 
 
 if __name__ == "__main__":

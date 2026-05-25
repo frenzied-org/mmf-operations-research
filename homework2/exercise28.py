@@ -3,15 +3,13 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from dataclasses import dataclass
+from itertools import combinations
 
 import numpy as np
 
-from basic_feasible_solutions import (
-    BasicFeasibleSolution,
-    enumerate_basic_feasible_solutions,
-)
 
-
+NUMERICAL_TOLERANCE = 1.0e-9
 VARIABLE_NAMES = ("x1", "x2", "s1", "s2", "s3")
 EQUALITY_MATRIX = np.array(
     [
@@ -23,6 +21,22 @@ EQUALITY_MATRIX = np.array(
 RIGHT_HAND_SIDE = np.array([6.0, 0.0, 3.0])
 
 
+@dataclass(frozen=True)
+class BasicFeasibleSolution:
+    """A feasible standard-form solution associated with one basis.
+
+    Attributes
+    ----------
+    basis:
+        Names of the three selected basic variables.
+    values:
+        Values ordered as ``(x1, x2, s1, s2, s3)``.
+    """
+
+    basis: tuple[str, ...]
+    values: np.ndarray
+
+
 def get_basic_feasible_solutions() -> list[BasicFeasibleSolution]:
     """Return each feasible basis for the standard-form system.
 
@@ -32,11 +46,26 @@ def get_basic_feasible_solutions() -> list[BasicFeasibleSolution]:
         Seven bases representing the three vertices of the feasible triangle.
     """
 
-    return enumerate_basic_feasible_solutions(
-        equality_matrix=EQUALITY_MATRIX,
-        right_hand_side=RIGHT_HAND_SIDE,
-        variable_names=VARIABLE_NAMES,
-    )
+    row_count, column_count = EQUALITY_MATRIX.shape
+    feasible_solutions: list[BasicFeasibleSolution] = []
+
+    # A basis chooses one independent column per equality constraint.
+    for basis_indices in combinations(range(column_count), row_count):
+        basis_matrix = EQUALITY_MATRIX[:, basis_indices]
+        if np.linalg.matrix_rank(basis_matrix) < row_count:
+            continue
+
+        basic_values = np.linalg.solve(basis_matrix, RIGHT_HAND_SIDE)
+        if np.any(basic_values < -NUMERICAL_TOLERANCE):
+            continue
+
+        values = np.zeros(column_count)
+        values[list(basis_indices)] = basic_values
+        values[np.abs(values) < NUMERICAL_TOLERANCE] = 0.0
+        basis_names = tuple(VARIABLE_NAMES[index] for index in basis_indices)
+        feasible_solutions.append(BasicFeasibleSolution(basis_names, values))
+
+    return feasible_solutions
 
 
 def get_bases_by_vertex() -> dict[tuple[float, float], list[tuple[str, ...]]]:

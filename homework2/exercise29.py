@@ -3,13 +3,30 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from itertools import combinations
 
 import numpy as np
 
-from basic_feasible_solutions import (
-    BasicFeasibleSolution,
-    enumerate_basic_feasible_solutions,
-)
+NUMERICAL_TOLERANCE = 1.0e-9
+
+
+@dataclass(frozen=True)
+class BasicFeasibleSolution:
+    """A feasible standard-form solution and its objective value.
+
+    Attributes
+    ----------
+    basis:
+        Names of the selected basic variables.
+    values:
+        Full decision-and-slack variable vector.
+    objective_value:
+        Value of the objective ``-x1 - 2*x2``.
+    """
+
+    basis: tuple[str, ...]
+    values: np.ndarray
+    objective_value: float
 
 
 @dataclass(frozen=True)
@@ -39,15 +56,27 @@ def _solve_by_enumeration(
 ) -> EnumerationResult:
     """Enumerate feasible bases and select the minimum objective value."""
 
-    solutions = enumerate_basic_feasible_solutions(
-        equality_matrix=equality_matrix,
-        right_hand_side=right_hand_side,
-        variable_names=variable_names,
-        objective_coefficients=objective_coefficients,
-    )
+    row_count, column_count = equality_matrix.shape
+    solutions: list[BasicFeasibleSolution] = []
+    for basis_indices in combinations(range(column_count), row_count):
+        basis_matrix = equality_matrix[:, basis_indices]
+        if np.linalg.matrix_rank(basis_matrix) < row_count:
+            continue
+
+        basic_values = np.linalg.solve(basis_matrix, right_hand_side)
+        if np.any(basic_values < -NUMERICAL_TOLERANCE):
+            continue
+
+        values = np.zeros(column_count)
+        values[list(basis_indices)] = basic_values
+        values[np.abs(values) < NUMERICAL_TOLERANCE] = 0.0
+        basis = tuple(variable_names[index] for index in basis_indices)
+        objective_value = float(objective_coefficients @ values)
+        solutions.append(BasicFeasibleSolution(basis, values, objective_value))
+
     optimal_solution = min(
         solutions,
-        key=lambda solution: float(solution.objective_value),
+        key=lambda solution: solution.objective_value,
     )
     return EnumerationResult(
         variable_names=variable_names,

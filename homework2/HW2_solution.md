@@ -2,8 +2,9 @@
 
 ### Gerard (Lezhi) Wu
 
-All numerical work in this submission uses Python.  In Exercise 3.5(c),
-`simplex_method.py` is the Python counterpart of the textbook MATLAB function
+All numerical work in this submission uses Python.  Each assigned exercise has
+one corresponding Python script.  In Exercise 3.5(c), `exercise35.py`
+contains the Python counterpart of the textbook MATLAB function
 `SimplexMethod(c, Aeq, beq, B_set)`.
 
 ## Exercise 2.8
@@ -324,11 +325,11 @@ as well.
 
 ### Part (c): Python counterpart of the MATLAB call
 
-The file `simplex_method.py` implements the same standard-form minimum
-simplex inputs used by the textbook routine: `objective_coefficients`,
-`equality_matrix`, `right_hand_side`, and `initial_basis`.  The call in
-`exercise35_simplex.py` uses the arrays displayed in part (a), starts from
-the three slack variables, performs one pivot, and returns the optimum
+The file `exercise35.py` implements the same standard-form minimum simplex
+inputs used by the textbook routine: `objective_coefficients`,
+`equality_matrix`, `right_hand_side`, and `initial_basis`.  It uses the arrays
+displayed in part (a), starts from the three slack variables, performs one
+pivot, and returns the optimum
 
 $$
 (x_1,x_2,s_1,s_2,s_3)=(0,3,8,6,0),
