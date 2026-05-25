@@ -333,6 +333,33 @@ If not, derive an expression for the set of optimal solutions.
 
 Solve the linear program using the `SimplexMethod` MATLAB function from Section 3.7.
 
+## Reference Context for Exercise 3.5(c): Section 3.7
+
+Section 3.7 of the textbook is titled **Simplex Method MATLAB Code**.
+
+It introduces the MATLAB function `SimplexMethod(c, Aeq, beq, B_set)`.
+
+The function solves a linear program in standard form and minimizes $c^T x$.
+
+subject to
+
+\[
+Aeq\,x = beq
+\]
+
+\[
+x \ge 0.
+\]
+
+The inputs are:
+
+- `c`: objective coefficient vector.
+- `Aeq`: equality-constraint matrix.
+- `beq`: right-hand-side vector.
+- `B_set`: index set of the initial basic variables.
+
+For Exercise 3.5(c), first convert the linear program to standard form by adding slack variables. Then define `c`, `Aeq`, `beq`, and `B_set`, and call `SimplexMethod`.
+
 ---
 
 # Submission Checklist
