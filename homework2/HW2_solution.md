@@ -4,8 +4,7 @@
 
 All numerical work in this submission uses Python.  Each assigned exercise has
 one corresponding Python script.  In Exercise 3.5(c), `exercise35.py`
-contains the Python counterpart of the textbook MATLAB function
-`SimplexMethod(c, Aeq, beq, B_set)`.
+contains the standard-form simplex implementation used for the computation.
 
 ## Exercise 2.8
 
@@ -284,7 +283,7 @@ x_2+s_3 &=3.
 $$
 
 The objective coefficient vector, equality matrix, right-hand side, and
-initial slack basis used by the Python counterpart are
+initial slack basis used by the Python implementation are
 
 $$
 c=(0,-1,0,0,0)^T,
@@ -357,23 +356,18 @@ The optimum is not unique.  For example, both $(0,3)$ and $(6,3)$ have
 objective value $-3$, and every point on the line segment joining them does
 as well.
 
-### Part (c): textbook MATLAB call and Python reproduction
+### Part (c): Python simplex execution
 
-MATLAB uses one-based column indices, so the initial slack-variable basis is
-`[3 4 5]`.  The textbook call for this exercise is:
+The computation is performed by importing the exercise solver:
 
-```matlab
-c = [0; -1; 0; 0; 0];
-Aeq = [1 -2 1 0 0;
-       1 -1 0 1 0;
-       0  1 0 0 1];
-beq = [2; 3; 3];
-B_set = [3 4 5];
+```python
+from exercise35 import solve_exercise_35
 
-[xsol, objval, exitflag] = SimplexMethod(c, Aeq, beq, B_set)
+solution = solve_exercise_35()
+result = solution.simplex_result
 ```
 
-The file `exercise35.py` reproduces this standard-form calculation in Python
+The file `exercise35.py` performs this standard-form calculation in Python
 using `objective_coefficients`, `equality_matrix`, `right_hand_side`, and
 `initial_basis`.  It starts from the same three slack variables, performs one
 pivot, and returns the result
