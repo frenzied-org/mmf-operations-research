@@ -52,10 +52,9 @@ uv run --with matplotlib --with nbconvert jupyter nbconvert \
 ## Part 3: Short journal
 
 - 2026-05-25: Final audit added the displayed reduced costs, simplex
-  directions, ratio tests, and the exact MATLAB call required by Exercise
-  3.5(c); the Python reproduction remains the executable verification.
-- 2026-05-25: A Python standard-form simplex counterpart supplies executable
-  local verification of the Exercise 3.5(c) MATLAB inputs and result.
+  directions, ratio tests, and the Python execution path for Exercise 3.5(c).
+- 2026-05-25: The Python standard-form simplex implementation supplies
+  executable local verification of the Exercise 3.5(c) inputs and result.
 - 2026-05-25: Enumeration shows that both $(0,0)$ and $(3,3)$ in Exercise 2.8
   are degenerate vertices with multiple feasible bases.
 - 2026-05-25: Computations were reorganized into one self-contained Python

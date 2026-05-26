@@ -172,7 +172,7 @@ class Exercise35Solution:
 
 
 def solve_exercise_35() -> Exercise35Solution:
-    """Run the Python analogue of ``SimplexMethod`` for Exercise 3.5.
+    """Run the standard-form Python simplex calculation for Exercise 3.5.
 
     Returns
     -------
