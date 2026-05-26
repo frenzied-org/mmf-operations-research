@@ -65,8 +65,8 @@ one extreme point.
 | $(0,6)$ | 1 | Only one feasible basis represents it |
 | $(3,3)$ | 3 | $s_1=s_2=s_3=0$ at the point |
 
-Thus both $(0,0)$ and $(3,3)$ are represented by multiple basic feasible
-solutions.
+Thus both $(0,0)$ and $(3,3)$ are represented by multiple feasible bases,
+even though each point is a single basic feasible solution vector.
 
 ## Exercise 2.9
 
