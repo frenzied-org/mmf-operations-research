@@ -2,9 +2,9 @@
 
 ### Gerard (Lezhi) Wu
 
-All numerical work in this submission uses Python.  Each assigned exercise has
-one corresponding Python script.  In Exercise 3.5(c), `exercise35.py`
-contains the standard-form simplex implementation used for the computation.
+I used Python for the numerical work in this submission.  Each assigned
+exercise has its own script.  For Exercise 3.5(c), `exercise35.py` contains
+the standard-form simplex implementation used in the calculation.
 
 ## Exercise 2.8
 
@@ -22,7 +22,7 @@ $$
 (0,0), \qquad (0,6), \qquad (3,3).
 $$
 
-The notebook `HW2_explorer.ipynb` plots this triangle and labels the vertices.
+A labelled plot of this triangle is in `HW2_explorer.ipynb`.
 
 ### Part (b): standard form and basic feasible solutions
 
@@ -41,7 +41,7 @@ $$
 A **basis** is a choice of three linearly independent columns, one for each
 equality.  A **basic feasible solution** is the resulting nonnegative
 five-variable solution after setting all nonbasic variables equal to zero.
-Python enumeration gives:
+Enumerating the bases in Python gives:
 
 | Basis | $(x_1,x_2,s_1,s_2,s_3)$ | Extreme point $(x_1,x_2)$ |
 |---|---:|---:|
@@ -55,9 +55,9 @@ Python enumeration gives:
 
 ### Part (c): correspondence with extreme points
 
-There is no one-to-one correspondence.  A solution is **degenerate** when at
-least one basic variable is zero; degeneracy allows several bases to describe
-one extreme point.
+There is no one-to-one correspondence.  A **degenerate** solution has at least
+one basic variable equal to zero, so several bases may describe the same
+extreme point.
 
 | Extreme point | Number of feasible bases | Reason |
 |---|---:|---|
@@ -65,8 +65,8 @@ one extreme point.
 | $(0,6)$ | 1 | Only one feasible basis represents it |
 | $(3,3)$ | 3 | $s_1=s_2=s_3=0$ at the point |
 
-Thus both $(0,0)$ and $(3,3)$ are represented by multiple feasible bases,
-even though each point is a single basic feasible solution vector.
+Here, both $(0,0)$ and $(3,3)$ have multiple feasible bases, although each is
+one basic feasible solution vector.
 
 ## Exercise 2.9
 
@@ -111,7 +111,7 @@ x_1,x_2,s_1,s_2&\geq0.
 \end{aligned}
 $$
 
-Python enumeration gives:
+Enumerating the bases in Python gives:
 
 | Basis | $(x_1,x_2,s_1,s_2)$ | $z=-x_1-2x_2$ |
 |---|---:|---:|
@@ -137,18 +137,15 @@ c^Tw
 =z^*.
 $$
 
-Hence $w$ is also optimal and $P^*$ is convex.  For these supplied data, each
-part has a unique optimum, so the illustration reduces to
-$P^*=\{x^*\}$.  If $u,v\in P^*$, then $u=v=x^*$, and
+Hence $w$ is also optimal and $P^*$ is convex.  In the two problems above,
+the optimum is unique, so $P^*=\{x^*\}$ in each case.  If $u,v\in P^*$, then
+$u=v=x^*$, and
 
 $$
 \lambda u+(1-\lambda)v
 =\lambda x^*+(1-\lambda)x^*
 =x^*\in P^*.
 $$
-
-Thus each computed optimal-solution set is convex, although each is a
-singleton rather than an optimal line segment.
 
 ## Exercise 2.11
 
@@ -190,9 +187,9 @@ c^Ty-c^Tx
 \end{aligned}
 $$
 
-where the final inequality follows from $\epsilon>0$ and $c\ne0$.  Starting
-from any feasible $x$, a feasible point with a larger objective value can be
-constructed.  No feasible point can be optimal.
+where the final inequality follows from $\epsilon>0$ and $c\ne0$.  Every
+feasible $x$ therefore admits a feasible point with a larger objective value,
+so no feasible point is optimal.
 
 ## Exercise 3.4
 
@@ -216,8 +213,8 @@ $$
 \qquad x_1\geq0.
 $$
 
-The region is unbounded to the right.  The notebook plots the feasible portion
-over $0\leq x_1\leq8$ and marks that it continues beyond the plotted window.
+The region is unbounded to the right.  The notebook plots the portion with
+$0\leq x_1\leq8$ and marks the continuation beyond the plotted window.
 
 ### Parts (b) and (c): simplex method and unboundedness
 
@@ -303,7 +300,7 @@ b_{eq}=
 B_{\mathrm{set}}=(s_1,s_2,s_3).
 $$
 
-Here the variable vector is ordered as $(x_1,x_2,s_1,s_2,s_3)$.
+The variable vector is ordered as $(x_1,x_2,s_1,s_2,s_3)$.
 
 | Iteration | Basis | Basic point $(x_1,x_2,s_1,s_2,s_3)$ | Objective | Entering | Leaving | Step |
 |---:|---|---:|---:|---|---|---:|
@@ -330,7 +327,7 @@ $$
 The maximum feasible step is
 $\min(8/1,6/1)=6$, which reaches the second optimal endpoint $(6,3)$.
 
-One optimal basic feasible solution is therefore
+One optimal basic feasible solution is
 
 $$
 (x_1,x_2)=(0,3), \qquad z^*=-3.
@@ -352,9 +349,8 @@ $$
 P^*=\{(x_1,x_2)=(t,3)\mid 0\leq t\leq6\}.
 $$
 
-The optimum is not unique.  For example, both $(0,3)$ and $(6,3)$ have
-objective value $-3$, and every point on the line segment joining them does
-as well.
+The optimum is not unique: both $(0,3)$ and $(6,3)$ have objective value
+$-3$, as does every point on the line segment joining them.
 
 ### Part (c): Python simplex execution
 
