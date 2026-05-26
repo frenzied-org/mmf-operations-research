@@ -227,11 +227,23 @@ change associated with increasing a nonbasic variable while preserving the
 equalities.  For a minimization problem, a negative reduced cost permits an
 improving pivot.
 
+The variable vector below is ordered as $(x_1,x_2,s_1,s_2)$.  If $d$ is a
+simplex direction, a move of length $\theta\geq0$ has the form
+$x_{\mathrm{new}}=x+\theta d$.
+
 | Iteration | Basis | Basic point $(x_1,x_2,s_1,s_2)$ | Objective | Entering | Leaving | Step |
 |---:|---|---:|---:|---|---|---:|
 | 0 | $(s_1,s_2)$ | $(0,0,2,1)$ | $0$ | $x_2$ | $s_2$ | $1/2$ |
 | 1 | $(s_1,x_2)$ | $(0,1/2,1/2,0)$ | $-5/2$ | $x_1$ | $s_1$ | $1/7$ |
 | 2 | $(x_1,x_2)$ | $(1/7,5/7,0,0)$ | $-27/7$ | $s_2$ | none | unbounded |
+
+The corresponding reduced costs and directions are:
+
+| Iteration | Nonbasic reduced costs | Improving direction $d$ | Ratio test |
+|---:|---|---:|---|
+| 0 | $(r_{x_1},r_{x_2})=(-2,-5)$ | $(0,1,-3,-2)$ | $\min(2/3,1/2)=1/2$, so $s_2$ leaves |
+| 1 | $(r_{x_1},r_{s_2})=(-19/2,5/2)$ | $(1,3/2,-7/2,0)$ | $(1/2)/(7/2)=1/7$, so $s_1$ leaves |
+| 2 | $(r_{s_1},r_{s_2})=(19/7,-11/7)$ | $(3/7,1/7,0,1)$ | No component restricts an increase in $s_2$ |
 
 At iteration 2, increasing $s_2$ gives the full standard-form direction
 
@@ -292,10 +304,32 @@ b_{eq}=
 B_{\mathrm{set}}=(s_1,s_2,s_3).
 $$
 
+Here the variable vector is ordered as $(x_1,x_2,s_1,s_2,s_3)$.
+
 | Iteration | Basis | Basic point $(x_1,x_2,s_1,s_2,s_3)$ | Objective | Entering | Leaving | Step |
 |---:|---|---:|---:|---|---|---:|
 | 0 | $(s_1,s_2,s_3)$ | $(0,0,2,3,3)$ | $0$ | $x_2$ | $s_3$ | $3$ |
 | 1 | $(s_1,s_2,x_2)$ | $(0,3,8,6,0)$ | $-3$ | none | none | optimal |
+
+At iteration 0, the nonbasic reduced costs are
+$(r_{x_1},r_{x_2})=(0,-1)$.  Thus $x_2$ enters.  Its simplex direction is
+
+$$
+d=(0,1,2,1,-1),
+$$
+
+and only $s_3$ decreases, giving the ratio $3/1=3$ and the pivot shown in the
+table.  At iteration 1, the nonbasic reduced costs are
+$(r_{x_1},r_{s_3})=(0,1)$.  There is no negative reduced cost, so the point is
+optimal.  The zero reduced cost for $x_1$ also signals alternate optima:
+increasing $x_1$ uses direction
+
+$$
+d_{\mathrm{alt}}=(1,0,-1,-1,0).
+$$
+
+The maximum feasible step is
+$\min(8/1,6/1)=6$, which reaches the second optimal endpoint $(6,3)$.
 
 One optimal basic feasible solution is therefore
 
@@ -323,13 +357,26 @@ The optimum is not unique.  For example, both $(0,3)$ and $(6,3)$ have
 objective value $-3$, and every point on the line segment joining them does
 as well.
 
-### Part (c): Python counterpart of the MATLAB call
+### Part (c): textbook MATLAB call and Python reproduction
 
-The file `exercise35.py` implements the same standard-form minimum simplex
-inputs used by the textbook routine: `objective_coefficients`,
-`equality_matrix`, `right_hand_side`, and `initial_basis`.  It uses the arrays
-displayed in part (a), starts from the three slack variables, performs one
-pivot, and returns the optimum
+MATLAB uses one-based column indices, so the initial slack-variable basis is
+`[3 4 5]`.  The textbook call for this exercise is:
+
+```matlab
+c = [0; -1; 0; 0; 0];
+Aeq = [1 -2 1 0 0;
+       1 -1 0 1 0;
+       0  1 0 0 1];
+beq = [2; 3; 3];
+B_set = [3 4 5];
+
+[xsol, objval, exitflag] = SimplexMethod(c, Aeq, beq, B_set)
+```
+
+The file `exercise35.py` reproduces this standard-form calculation in Python
+using `objective_coefficients`, `equality_matrix`, `right_hand_side`, and
+`initial_basis`.  It starts from the same three slack variables, performs one
+pivot, and returns the result
 
 $$
 (x_1,x_2,s_1,s_2,s_3)=(0,3,8,6,0),
