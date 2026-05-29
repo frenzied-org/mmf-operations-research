@@ -128,7 +128,9 @@ def load_project_dataset(dataset_id: int) -> ProjectDataset:
     cleaned_factor_header = [name.strip() for name in factor_header]
     risk_free_index = cleaned_factor_header.index("RF")
     factor_indices = [
-        index for index in range(1, len(cleaned_factor_header)) if index != risk_free_index
+        index
+        for index in range(1, len(cleaned_factor_header))
+        if index != risk_free_index
     ]
     factor_names = [cleaned_factor_header[index] for index in factor_indices]
     factor_returns = np.array(
@@ -278,9 +280,7 @@ def run_backtest(
 
     annualized_excess_return = (1.0 + average_excess_return) ** MONTHS_PER_YEAR - 1.0
     annualized_volatility = monthly_volatility * math.sqrt(MONTHS_PER_YEAR)
-    average_turnover = float(
-        np.mean([float(row[3]) for row in turnover_rows[1:]])
-    )
+    average_turnover = float(np.mean([float(row[3]) for row in turnover_rows[1:]]))
 
     metrics = {
         "period_count": float(len(turnover_rows)),
@@ -458,7 +458,9 @@ def _write_weight_svg(result: BacktestResult) -> None:
         if float(row[4]) > 0.01
     }
     active_assets = [
-        asset for asset in assets if any((period, asset) in weights for period in periods)
+        asset
+        for asset in assets
+        if any((period, asset) in weights for period in periods)
     ]
     active_assets = active_assets[:12]
 
@@ -624,17 +626,19 @@ strategy to adapt to changing factor and risk estimates.
 
 ## Training Dataset Results
 
-{_markdown_table(
-        [
-            "Dataset",
-            "Sharpe ratio",
-            "Average turnover",
-            "Annualized excess return",
-            "Annualized volatility",
-            "Final value",
-        ],
-        performance_rows,
-    )}
+{
+        _markdown_table(
+            [
+                "Dataset",
+                "Sharpe ratio",
+                "Average turnover",
+                "Annualized excess return",
+                "Annualized volatility",
+                "Final value",
+            ],
+            performance_rows,
+        )
+    }
 
 The full output tables are saved in `outputs/tables/`. The wealth and portfolio
 composition figures are saved in `outputs/figures/`.

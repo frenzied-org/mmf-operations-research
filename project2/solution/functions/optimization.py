@@ -33,9 +33,7 @@ def _project_to_simplex(values: np.ndarray) -> np.ndarray:
         return np.full(vector.size, 1.0 / vector.size)
 
     last_support_index = int(np.where(support)[0][-1])
-    threshold = (cumulative_sum[last_support_index] - 1.0) / (
-        last_support_index + 1
-    )
+    threshold = (cumulative_sum[last_support_index] - 1.0) / (last_support_index + 1)
     projected = np.maximum(vector - threshold, 0.0)
 
     return projected / projected.sum()
