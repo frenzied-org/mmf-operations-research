@@ -7,6 +7,7 @@ submitted: data alignment, portfolio constraints, and backtest outputs.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import sys
 
@@ -15,6 +16,8 @@ import numpy as np
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SOLUTION_DIR = PROJECT_ROOT / "solution"
+NOTEBOOK_PATH = PROJECT_ROOT / "MMF1921_Project_2_Solution.ipynb"
+REPORT_PATH = PROJECT_ROOT / "MMF1921_Project_2_Final_Report.md"
 sys.path.insert(0, str(SOLUTION_DIR))
 
 from project2_core import load_project_dataset, run_all_experiments, run_backtest  # noqa: E402
@@ -93,6 +96,30 @@ def test_all_experiments_cover_three_training_datasets() -> None:
         assert result.metrics["final_value"] > 0.0
 
 
+def test_solution_notebook_executes_and_final_report_exists() -> None:
+    """The student-facing notebook and final write-up should both run cleanly."""
+
+    assert NOTEBOOK_PATH.exists()
+    notebook_text = NOTEBOOK_PATH.read_text()
+    assert "/Users/" not in notebook_text
+    assert "MATLAB" not in notebook_text
+
+    notebook = json.loads(notebook_text)
+    namespace: dict[str, object] = {"__name__": "__notebook_test__"}
+    for cell in notebook["cells"]:
+        if cell["cell_type"] != "code":
+            continue
+
+        source = "".join(cell["source"])
+        compiled_cell = compile(source, str(NOTEBOOK_PATH), "exec")
+        exec(compiled_cell, namespace)
+
+    report_text = REPORT_PATH.read_text()
+    assert "## Conclusion" in report_text
+    assert "TBD" not in report_text
+    assert "TODO" not in report_text
+
+
 def main() -> None:
     """Run all Project 2 tests."""
 
@@ -101,6 +128,7 @@ def main() -> None:
     test_project_function_uses_latest_populated_weight_column()
     test_backtest_produces_metrics_tables_and_weight_history()
     test_all_experiments_cover_three_training_datasets()
+    test_solution_notebook_executes_and_final_report_exists()
     print("All Project 2 tests passed.")
 
 
