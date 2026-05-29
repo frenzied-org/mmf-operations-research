@@ -2,10 +2,10 @@
 
 ## Introduction
 
-This report develops a Python-only automated asset management system for the
-Project 2 investment competition. The algorithm is designed for monthly equity
-and equity-factor data. It uses the first five years of each dataset for
-initial calibration and then rebalances every six months.
+This report presents a Python-only automated asset management system for the
+Project 2 investment competition. The algorithm works with monthly equity and
+equity-factor data, uses the first five years of each dataset for initial
+calibration, and then rebalances every six months.
 
 The assessment criteria are ex-post Sharpe ratio, average turnover, and runtime.
 A Sharpe ratio is average excess return divided by volatility, where excess
@@ -14,9 +14,9 @@ absolute changes in portfolio weights at a rebalance.
 
 ## Methodology
 
-The final strategy is a shrinkage factor-model mean-variance strategy. At each
-rebalance date, the algorithm uses the most recent 60 monthly observations. For
-asset $i$, the factor model is
+The selected strategy combines a shrinkage factor model with mean-variance
+optimization. At each rebalance date, the algorithm uses the most recent 60
+monthly observations. For asset $i$, the factor model is
 
 $$
 r_i - r_f = \alpha_i + \sum_k \beta_{ik} f_k + \epsilon_i
@@ -37,10 +37,9 @@ $$
 where $B$ is the factor-loading matrix, $\Sigma_f$ is the factor covariance
 matrix, and $D_\epsilon$ is the diagonal matrix of residual variances.
 
-Expected returns are noisy, especially with only monthly data, so the raw
-factor-model expected returns are shrunk toward their cross-sectional average.
-The optimizer solves a long-only mean-variance problem with a maximum single
-asset weight:
+Expected returns are noisy in monthly samples, so the raw factor-model expected
+returns are shrunk toward their cross-sectional average. The optimizer solves a
+long-only mean-variance problem with a maximum single-asset weight:
 
 $$
 \min_x \; \frac12 x^T Q x - \gamma \mu^T x
@@ -57,17 +56,17 @@ the expected-return tilt.
 
 ## Turnover Control
 
-Project 2 explicitly grades average turnover, so the final portfolio is blended
-with the current pre-trade portfolio after the first rebalance. If $x^*$ is the
-new optimized portfolio and $x_0$ is the portfolio after market drift, the
-traded portfolio is
+Project 2 grades average turnover directly, so each post-initial rebalance
+blends the optimized portfolio with the current pre-trade portfolio. If $x^*$
+is the new optimized portfolio and $x_0$ is the portfolio after market drift,
+the traded portfolio is
 
 $$
 x = b x^* + (1-b) x_0
 $$
 
-where $b = 0.40$. This reduces unnecessary trading while still allowing the
-strategy to adapt to changing factor and risk estimates.
+where $b = 0.40$. The blend limits unnecessary trading while still letting the
+strategy respond to changing factor and risk estimates.
 
 ## Training Dataset Results
 
@@ -77,7 +76,7 @@ strategy to adapt to changing factor and risk estimates.
 | 2 | 0.1615 | 0.2634 | 12.06% | 20.46% | \$375,750.44 |
 | 3 | 0.1787 | 0.2802 | 13.67% | 20.82% | \$302,008.10 |
 
-The full output tables are saved in `outputs/tables/`. The wealth and portfolio
+The output tables are saved in `outputs/tables/`. The wealth and portfolio
 composition figures are saved in `outputs/figures/`.
 
 ![Portfolio wealth evolution](outputs/figures/wealth_evolution.svg)
@@ -86,23 +85,23 @@ composition figures are saved in `outputs/figures/`.
 
 ## Discussion
 
-The strategy deliberately avoids aggressive return forecasting. Pure
-mean-variance optimization can place extreme weights on assets with slightly
-higher estimated returns, but those estimates are unstable in short monthly
-samples. Shrinking expected returns and capping single-name weights make the
-portfolio less sensitive to estimation error.
+The strategy avoids aggressive return forecasting. Pure mean-variance
+optimization can place large weights on assets with slightly higher estimated
+returns, but those estimates are unstable in short monthly samples. Shrinking
+expected returns and capping single-name weights make the portfolio less
+sensitive to estimation error.
 
-The main strength of the algorithm is robustness: it works for different asset
-counts, uses only historical information available at each rebalance, and keeps
-turnover under control. The main weakness is that conservative shrinkage may
-miss strong market regimes where a more aggressive return forecast would have
-performed better.
+The algorithm's main strength is that it remains usable across different asset
+counts, relies only on historical information available at each rebalance, and
+keeps turnover controlled. Its main weakness is the same conservatism: strong
+market regimes can reward a sharper return forecast than this implementation is
+designed to make.
 
 ## Conclusion
 
 The selected Project 2 algorithm combines a course-relevant multifactor model
 with constrained mean-variance optimization and explicit turnover control. The
 implementation is Python-only, uses the provided datasets without modifying
-source files, and runs quickly across all three training datasets.
+source files, and runs quickly on all three training datasets.
 
 Runtime for the full experiment was 0.50 seconds.
